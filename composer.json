@@ -1,0 +1,15 @@
+{
+  "name": "dapepe/microdb",
+  "description": "A minimalistic DB abstraction layer for MySQL and PostgreSQL",
+  "license": "GPL",
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "authors": [
+	{
+      "name": "Peter Haider",
+      "email": "peter.haider@zeyon.net",
+      "homepage": "https://www.about.me/peterhaider"
+    }
+  ]
+}
