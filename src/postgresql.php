@@ -1,6 +1,6 @@
 <?php
 
-namespace mdb;
+namespace MicroDB;
 
 /**
  * The dbPostgreSQL class is an additional dbConnector to enable xily to work with PostgreSQL databases.

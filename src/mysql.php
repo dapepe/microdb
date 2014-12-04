@@ -1,6 +1,6 @@
 <?php
 
-namespace mdb;
+namespace MicroDB;
 
 /**
  * The dbMySQL class is an additional dbConnector to enable xily to work with MySQL databases.

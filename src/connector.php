@@ -1,6 +1,6 @@
 <?php
 
-namespace mdb;
+namespace MicroDB;
 
 include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'exception.php';
 include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'view.php';

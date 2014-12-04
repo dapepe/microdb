@@ -1,6 +1,6 @@
 <?php
 
-namespace mdb;
+namespace MicroDB;
 
 /**
  * The dbTable object represents a table of a database.

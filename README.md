@@ -1,4 +1,4 @@
-microdb - a minimalistic DB abstraction layer for MySQL and PostgreSQL
+MicroDB - a minimalistic DB abstraction layer for MySQL and PostgreSQL
 ======================================================================
 
 Example
@@ -10,7 +10,7 @@ Example:
 include './lib/microdb/src/connector.php';
 include './lib/microdb/src/postgresql.php';
 
-$db = new mdb\PostgreSQL('127.0.0.1', 'myuser', 'mypassword', 'mydb');
+$db = new MicroDB\PostgreSQL('127.0.0.1', 'myuser', 'mypassword', 'mydb');
 
 foreach ($db->tables() as $tableId) {
 	echo 'Scanning '.$tableId."\n";

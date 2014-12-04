@@ -1,6 +1,6 @@
 <?php
 
-namespace mdb;
+namespace MicroDB;
 
 /**
  * The dbView object represents a view of a database.
