@@ -29,16 +29,35 @@ class Table extends View {
 	/**
 	 * Updates a specified item
 	 *
+	 * @param string $strKey The selector
+	 * @param string $strID Key of the object
+	 * @param array $arrValues Assoc. Array containing the values to be updated
+	 * @return bool
+	 */
+	public function updateBy($strKey, $strID, $arrValues) {
+		return $this->sqlLink->update($this->strID, $arrValues, $strKey."=".$strID);
+	}
+
+	/**
+	 * Updates a specified item
+	 *
 	 * @param string $strID Key of the object
 	 * @param array $arrValues Assoc. Array containing the values to be updated
 	 * @return bool
 	 */
 	public function update($strID, $arrValues) {
-		if ($this->strKey) {
-			return $this->sqlLink->update($this->strID, $arrValues, $this->strKey."=".$strID);
-		} else {
-			throw new Exception('There is no key defined for this table.');
-		}
+		return $this->updateBy($this->strKey, $strID, $arrValues);
+	}
+
+	/**
+	 * Removes a specified item
+	 *
+	 * @param string $strKey The selector
+	 * @param string $strID Key of the object
+	 * @return bool
+	 */
+	public function removeBy($strKey, $strID) {
+		return $this->sqlLink->remove($this->strID, $strKey."=".$strID);
 	}
 
 	/**
@@ -48,10 +67,6 @@ class Table extends View {
 	 * @return bool
 	 */
 	public function remove($strID) {
-		if ($this->strKey) {
-			return $this->sqlLink->remove($this->strID, $this->strKey."=".$strID);
-		} else {
-			throw new Exception('There is no key defined for this table.');
-		}
+		return $this->removeBy($this->strKey, $strID);
 	}
 }

@@ -66,7 +66,7 @@ class PostgreSQL extends Connector {
 			$this->objServer = $mxtServer;
 		}
 
-		$this->init();
+		$db->init();
 		return $this;
 	}
 

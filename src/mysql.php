@@ -34,7 +34,7 @@ class MySQL extends Connector {
 	 * Connects to a database.
 	 * You can either pass an existing database resource or leave it to the method to create the connection itself;
 	 * Example 1:
-	 * $myServer = mysql_connect($strServer, $strUser, $strPassword);
+	 * $myServer = mysqli_connect($strServer, $strUser, $strPassword);
 	 * $sqlObject = new dbMySQL($myServer);
 	 * Example 2:
 	 * $sqlObject = new dbMySQL("localhost", "root", "", "xilydb");
@@ -47,12 +47,12 @@ class MySQL extends Connector {
 	 */
 	public function connect($mxtServer, $strUser="", $strPassword="", $strDatabase="") {
 		if (is_string($mxtServer)) {
-			$this->objServer = mysql_connect($mxtServer, $strUser, $strPassword);
+			$this->objServer = mysqli_connect($mxtServer, $strUser, $strPassword);
 			if ($this->objServer) {
 				$this->strServer = $mxtServer;
 				$this->strUser = $strUser;
 				if ($strDatabase) {
-					if(mysql_select_db($strDatabase, $this->objServer)) {
+					if(mysqli_select_db($this->objServer, $strDatabase)) {
 						$this->strDatabase = $strDatabase;
 						$this->init();
 						return true;
@@ -69,7 +69,7 @@ class MySQL extends Connector {
 				return false;
 			}
 		} else {
-			if (mysql_ping($mxtServer)) {
+			if (mysqli_ping($mxtServer)) {
 				$this->objServer = $mxtServer;
 				return true;
 			} else {
@@ -90,7 +90,7 @@ class MySQL extends Connector {
 	 * Disconnects from the object's database.
 	 */
 	public function disconnect() {
-		if (mysql_close($this->objServer)) {
+		if (mysqli_close($this->objServer)) {
 			unset($this->objServer);
 			return true;
 		} else
@@ -109,13 +109,12 @@ class MySQL extends Connector {
 		if ( !$this->ping() )
 			return false;
 
-		$resDB = mysql_query($strQuery);
+		$resDB = mysqli_query($this->objServer, $strQuery);
 
 		if ( $resDB !== false ) {
 			return $resDB;
 		} else {
-			$this->errorAdd('query', 'Could not execute query "'.$strQuery.'"; Server Message: '.mysql_error());
-			return false;
+			throw new Exception('Could not execute query "'.$strQuery.'"; Server Message: '.mysqli_error($this->objServer));
 		}
 	}
 
@@ -136,25 +135,25 @@ class MySQL extends Connector {
 			$mxtSelect = implode(", ", $mxtSelect);
 		if (!$mxtSelect) $mxtSelect = "*";
 
-		$strQuery = 'SELECT '.$mxtSelect.' FROM '.$strFrom;
+		$strQuery = 'SELECT '.mysqli_real_escape_string($this->objServer, $mxtSelect).' FROM '.mysqli_real_escape_string($this->objServer, $strFrom);
 
-		if ($strWhere)
-			$strQuery .= ' WHERE '.$strWhere;
+		if ($strWhere && $strWhere != '')
+			$strQuery .= ' WHERE '.mysqli_real_escape_string($this->objServer, $strWhere);
 
 		if ($strSortFild) {
-			$strQuery .= ' ORDER BY '.$strSortFild;
+			$strQuery .= ' ORDER BY '.mysqli_real_escape_string($this->objServer, $strSortFild);
 			if ($strSortMode)
-				$strQuery .= ' '.$strSortMode;
+				$strQuery .= ' '.mysqli_real_escape_string($this->objServer, $strSortMode);
 		}
 
 		if ($strGroupBy)
-			$strQuery .= ' GROUP BY '.$strGroupBy;
+			$strQuery .= ' GROUP BY '.mysqli_real_escape_string($this->objServer, $strGroupBy);
 
 		$resDB = $this->query($strQuery);
 
 		if ($resDB) {
 			$arrRow = $this->row($resDB);
-			mysql_free_result($resDB);
+			mysqli_free_result($resDB);
 			return $arrRow;
 		} else {
 			$this->errorAdd('select', 'No valid result received to return a row. I did all I could but I give up.');
@@ -178,7 +177,7 @@ class MySQL extends Connector {
 		$resDB = $this->query($strQuery);
 		if ($resDB) {
 			$arrRow = $this->row($resDB);
-			mysql_free_result($resDB);
+			mysqli_free_result($resDB);
 			return $arrRow;
 		} else {
 			$this->errorAdd('select', 'No valid result received to return a row. I did all I could but I give up.');
@@ -252,7 +251,7 @@ class MySQL extends Connector {
 	 * @return string|bool
 	 */
 	public function lastKey($strTable) {
-		return mysql_insert_id($this->objServer);
+		return mysqli_insert_id($this->objServer);
 	}
 
 	/**
@@ -325,13 +324,18 @@ class MySQL extends Connector {
 	 */
 	public function tables() {
 		if ($this->ping()) {
-			$arrTables = array();
-			$resDB = mysql_list_tables($this->strDatabase, $this->objServer);
-			while ($row = mysql_fetch_row($resDB)) {
-			    $arrTables[] = $row[0];
+			$resDB = $this->query('SHOW TABLES');
+			if ($resDB) {
+				$arrTables = [];
+				foreach ($this->row($resDB, false) as $row) {
+					$arrTables[] = $row[0];
+				}
+				mysqli_free_result($resDB);
+				return $arrTables;
+			} else {
+				$this->errorAdd('select', 'No valid result received to return a row. I did all I could but I give up.');
+				return false;
 			}
-			mysql_free_result($resDB);
-			return $arrTables;
 		}
 	}
 
@@ -364,9 +368,9 @@ class MySQL extends Connector {
 		$strQuery = 'SHOW COLUMNS FROM '.$strTable;
 		$resDB = $this->query($strQuery);
 		if ($resDB) {
-			if (mysql_num_rows($resDB) > 0) {
+			if (mysqli_num_rows($resDB) > 0) {
 				$arrFields = array();
-			    while ($row = mysql_fetch_assoc($resDB)) {
+			    while ($row = mysqli_fetch_assoc($resDB)) {
 					$arrFields[] = $row['Field'];
 			    }
 			    return $arrFields;
@@ -385,12 +389,12 @@ class MySQL extends Connector {
 	 * e.g. $row[0]['name'], $row[1]['name'], etc.
 	 *
 	 * @param resource $resDB
-	 * @param string $strOutput MYSQL_BOTH, MYSQL_NUM, MYSQL_ASSOC
 	 * @return array|bool
 	 */
-	public function row($resDB, $strOutput=MYSQL_ASSOC) {
+	public function row($resDB, $bolAssoc = true) {
 		$arrResult = array();
-		while ($row = mysql_fetch_array($resDB, $strOutput)) {
+
+		while ($row = $bolAssoc ? mysqli_fetch_assoc($resDB) : mysqli_fetch_row($resDB)) {
 			array_push($arrResult, $row);
 		}
 		return $arrResult;
@@ -402,7 +406,7 @@ class MySQL extends Connector {
 	 * @return string|bool
 	 */
 	public function sqlerror() {
-		return mysql_error($this->objServer);
+		return mysqli_error($this->objServer);
 	}
 
 	/**
@@ -412,7 +416,7 @@ class MySQL extends Connector {
 	 */
 	public function ping() {
 		if ($this->objServer) {
-			if (mysql_ping($this->objServer)) {
+			if (mysqli_ping($this->objServer)) {
 				return true;
 			} else {
 				$this->errorAdd('ping', 'No ping received from the server. It seems I lost the connection.');
@@ -442,7 +446,7 @@ class MySQL extends Connector {
 	 * @return string The quoted string (e.g. "abc" => "'abc'").
 	 */
 	public function dbString($value) {
-		return ( is_null($value) ? 'NULL' : '\''.mysql_escape_string($value).'\'' );
+		return ( is_null($value) ? 'NULL' : '\''.mysqli_escape_string($this->objServer, $value).'\'' );
 	}
 
 }

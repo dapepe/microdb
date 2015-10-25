@@ -55,21 +55,31 @@ class View {
 	}
 
 	/**
+	 * Returns a complete node
+	 *
+	 * @param string $strKey
+	 * @param string $strID
+	 * @return array|bool
+	 */
+	public function getOneBy($strKey, $strID) {
+		$arrItem = $this->sqlLink->select('*', $this->strID, $strKey.'='.$strID);
+		if ($arrItem)
+			return $arrItem[0];
+		else
+			return false;
+	}
+
+	/**
 	 * Returns a complete node, identified by its primary key
 	 *
 	 * @param string $strID
 	 * @return array|bool
 	 */
-	public function item($strID) {
-		if ($this->strKey) {
-			$arrItem = $this->sqlLink->select('*', $this->strID, $this->strKey.'='.$strID);
-			if ($arrItem)
-				return $arrItem[0];
-			else
-				return false;
-		} else {
+	public function getOne($strID) {
+		if (!$this->strKey)
 			throw new Exception('There is no key defined for this table.');
-		}
+
+		return $this->getOneBy($this->strKey, $strID);
 	}
 
 	// ============== Advanced data functions ==============
