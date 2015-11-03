@@ -3,16 +3,10 @@
 namespace MicroDB;
 
 /**
- * The dbView object represents a view of a database.
+ * The View object represents a view of a database.
  * This way you can directly work with a table instead of calling
  * all commands directly via the database object.
  *
- * @author Peter Haider <pepe@xilylabs.com>
- * @version 1.03
- * @package xily
- * @copyright Copyright (c) 2008, Peter Haider
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- * @example usage/xily.xml.use.php Some samples how to use this function
  */
 class View {
 	// ============== Object's core attributes ==============

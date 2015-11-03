@@ -7,7 +7,7 @@ include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'view.php';
 include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'table.php';
 
 /**
- * The dbConnector class extends the basic xily framework to work with SQL databases.
+ * The Connector class extends the basic xily framework to work with SQL databases.
  * Please note that dbConnector is an abstract class and only provides the basic
  * functionality for database specific classes, such as dbMySQL or dbPostgreSQL class.
  * When building your own dbConnector, you would have to include the following methods:
@@ -34,11 +34,7 @@ include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'table.php';
  * dbIdentifier() *** ABSTRACT; MUST OVERRIDE ***
  * dbString() *** ABSTRACT; MUST OVERRIDE ***
  *
- * @author Peter Haider <pepe@xilylabs.com>
- * @version 1.03
- * @package xily
- * @copyright Copyright (c) 2008, Peter Haider
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @author Peter Haider
  *
  */
 abstract class Connector {

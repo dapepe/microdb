@@ -3,14 +3,7 @@
 namespace MicroDB;
 
 /**
- * The dbMySQL class is an additional dbConnector to enable xily to work with MySQL databases.
- *
- * @author Peter Haider <pepe@xilylabs.com>
- * @version 1.03
- * @package xily
- * @copyright Copyright (c) 2008, Peter Haider
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
- * @example usage/xily.xml.use.php Some samples how to use this function
+ * The MySQL class is an additional Connector to enable xily to work with MySQL databases.
  *
  */
 
