@@ -2,14 +2,14 @@
 
 namespace MicroDB;
 
-include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'exception.php';
-include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'view.php';
-include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'table.php';
+include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Exception.php';
+include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'View.php';
+include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Table.php';
 
 /**
  * The Connector class extends the basic xily framework to work with SQL databases.
  * Please note that dbConnector is an abstract class and only provides the basic
- * functionality for database specific classes, such as dbMySQL or dbPostgreSQL class.
+ * functionality for database specific classes, such as MySQL or PostgreSQL class.
  * When building your own dbConnector, you would have to include the following methods:
  *
  * connect($mxtServer, $strUser="", $strPassword="", $strDatabase="")
