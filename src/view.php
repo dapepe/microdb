@@ -62,7 +62,7 @@ class View {
 	 * @return array|bool
 	 */
 	public function getOneBy($strKey, $strID) {
-		$arrItem = $this->sqlLink->select('*', $this->strID, $strKey.'='.$strID);
+		$arrItem = $this->sqlLink->select('*', $this->strID, $this->sqlLink->where($strKey, $strID));
 		if ($arrItem)
 			return $arrItem[0];
 		else

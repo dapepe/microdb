@@ -138,7 +138,7 @@ class MySQL extends Connector {
 		$strQuery = 'SELECT '.mysqli_real_escape_string($this->objServer, $mxtSelect).' FROM '.mysqli_real_escape_string($this->objServer, $strFrom);
 
 		if ($strWhere && $strWhere != '')
-			$strQuery .= ' WHERE '.mysqli_real_escape_string($this->objServer, $strWhere);
+			$strQuery .= ' WHERE '.$strWhere; // Already escaped
 
 		if ($strSortFild) {
 			$strQuery .= ' ORDER BY '.mysqli_real_escape_string($this->objServer, $strSortFild);
@@ -449,6 +449,13 @@ class MySQL extends Connector {
 		return ( is_null($value) ? 'NULL' : '\''.mysqli_escape_string($this->objServer, $value).'\'' );
 	}
 
+	public function where($strKey, $strID, $strOperator='=') {
+		return mysqli_escape_string($this->objServer, $strKey).$strOperator.$this->dbString($strID);
+	}
+
+	public function whereLike($strKey, $strID) {
+		return $this->where($strKey, $strID, ' LIKE ');
+	}
 }
 
 ?>

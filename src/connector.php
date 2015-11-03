@@ -279,7 +279,6 @@ abstract class Connector {
 		if ( strlen($expressions) > 0 )
 			return 'WHERE '.$expressions;
 	}
-
 }
 
 ?>

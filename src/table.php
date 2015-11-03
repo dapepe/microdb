@@ -35,7 +35,7 @@ class Table extends View {
 	 * @return bool
 	 */
 	public function updateBy($strKey, $strID, $arrValues) {
-		return $this->sqlLink->update($this->strID, $arrValues, $strKey."=".$strID);
+		return $this->sqlLink->update($arrValues, $this->strID, $this->sqlLink->where($strKey, $strID));
 	}
 
 	/**
@@ -57,7 +57,7 @@ class Table extends View {
 	 * @return bool
 	 */
 	public function removeBy($strKey, $strID) {
-		return $this->sqlLink->remove($this->strID, $strKey."=".$strID);
+		return $this->sqlLink->remove($this->strID, $this->sqlLink->where($strKey, $strID));
 	}
 
 	/**

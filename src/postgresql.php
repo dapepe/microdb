@@ -402,6 +402,13 @@ class PostgreSQL extends Connector {
 		return ( is_null($value) ? 'NULL' : '\''.\pg_escape_string($value).'\'' );
 	}
 
+	public function where($strKey, $strID, $strOperator='=') {
+		return \pg_escape_string($strKey).$strOperator.$this->dbString($strID);
+	}
+
+	public function whereLike($strKey, $strID) {
+		return $this->where($strKey, $strID, ' LIKE ');
+	}
 }
 
 ?>
