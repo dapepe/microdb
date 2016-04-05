@@ -48,7 +48,7 @@ class PostgreSQL extends Connector {
 			} else {
 				$strPort = 5432;
 			}
-			$strConnect = 'host='.$mxtServer.' port='.$strPort.' user='.$strUser.' password='.$strPassword.' dbname='.$strDatabase;
+			$strConnect = 'host='.$mxtServer.' port='.$strPort.' user='.$strUser.($strPassword == '' ? '' : ' password='.$strPassword).' dbname='.$strDatabase;
 			$this->objServer = \pg_connect($strConnect);
 			if (!$this->objServer)
 				throw new Exception('Cound not connect to database!');
