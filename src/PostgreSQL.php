@@ -43,7 +43,7 @@ class PostgreSQL extends Connector {
 		if (is_string($mxtServer)) {
 			$arrServer = explode(':', $mxtServer);
 			if (sizeof($arrServer) > 1) {
-				$strServer = $arrServer[0];
+				$mxtServer = $arrServer[0];
 				$strPort = $arrServer[1];
 			} else {
 				$strPort = 5432;
@@ -59,7 +59,7 @@ class PostgreSQL extends Connector {
 			$this->objServer = $mxtServer;
 		}
 
-		$db->init();
+		$this->init();
 		return $this;
 	}
 
@@ -116,7 +116,7 @@ class PostgreSQL extends Connector {
 			$mxtSelect = implode(", ", $mxtSelect);
 		if (!$mxtSelect) $mxtSelect = "*";
 
-		$strQuery = 'SELECT '.$mxtSelect.' FROM '.$strFrom;
+		$strQuery = 'SELECT '.$mxtSelect.' FROM "'.$strFrom.'"';
 
 		if ($strWhere)
 			$strQuery .= ' WHERE '.$strWhere;
@@ -151,7 +151,7 @@ class PostgreSQL extends Connector {
 	 * @return array|bool
 	 */
 	public function joinLeft($mxtFields="", $strMainTable, $strJoinTable, $strLink) {
-		$strQuery  = 'SELECT '.$mxtFields.' FROM '.$strMainTable.' LEFT OUTER JOIN '.$strJoinTable.' ON '.$strLink;
+		$strQuery  = 'SELECT '.$mxtFields.' FROM "'.$strMainTable.'" LEFT OUTER JOIN '.$strJoinTable.' ON '.$strLink;
 		return $this->query($strQuery);
 	}
 
@@ -163,7 +163,7 @@ class PostgreSQL extends Connector {
 	 * @return bool
 	 */
 	public function remove($strTable, $strWhere) {
-		$strQuery = 'DELETE FROM '.$strTable;
+		$strQuery = 'DELETE FROM "'.$strTable.'"';
 		$strQuery .= ' WHERE '.$strWhere;
 		return $resultID = $this->query($strQuery);
 	}
@@ -189,7 +189,7 @@ class PostgreSQL extends Connector {
 
 		$strSet = substr($strSet, 0, -1);
 
-		$strQuery = 'UPDATE '.$strTable.' SET '.$strSet;
+		$strQuery = 'UPDATE "'.$strTable.'" SET '.$strSet;
 
 		if ( !is_null($strWhere) )
 			$strQuery .= ' WHERE '.$strWhere;
@@ -207,10 +207,10 @@ class PostgreSQL extends Connector {
 	 * @return bool
 	 */
 	public function insert(array $arrValues, $strTable) {
-		$strColumns = implode(',', array_keys($arrValues));
+		$strColumns = implode(',', array_map(function($value) { return '"'.$value.'"'; }, array_keys($arrValues)));
 		$strValues = implode(',', array_map(array($this, 'dbParameter'), array_values($arrValues)));
 
-		$strQuery = 'INSERT INTO '.$strTable.' ('.$strColumns.') VALUES ('.$strValues.')';
+		$strQuery = 'INSERT INTO "'.$strTable.'" ('.$strColumns.') VALUES ('.$strValues.')';
 
 		return $this->query($strQuery);
 	}
@@ -251,7 +251,7 @@ class PostgreSQL extends Connector {
 	 * @return bool
 	 */
 	public function drop_table($strTable) {
-		$strQuery = 'DROP TABLE '.$strTable;
+		$strQuery = 'DROP TABLE "'.$strTable.'"';
 		if ($this->query($strQuery)) {
 			// unset($this->table($strTable));
 			return true;
@@ -266,7 +266,7 @@ class PostgreSQL extends Connector {
 	 * @return bool
 	 */
 	public function drop_view($strView) {
-		$strQuery = 'DROP VIEW '.$strView;
+		$strQuery = 'DROP VIEW "'.$strView.'"';
 		if ($this->query($strQuery)) {
 			// unset($this->table($strTable));
 			return true;
@@ -346,7 +346,7 @@ class PostgreSQL extends Connector {
 	 */
 	public function row($resDB, $strOutput=PGSQL_ASSOC) {
 		$arrResult = array();
-		while ($row = \pg_fetch_array($resDB, $strOutput)) {
+		while ($row = \pg_fetch_array($resDB, null, $strOutput)) {
 			array_push($arrResult, $row);
 		}
 		return $arrResult;
@@ -396,7 +396,7 @@ class PostgreSQL extends Connector {
 	}
 
 	public function where($strKey, $strID, $strOperator='=') {
-		return \pg_escape_string($strKey).$strOperator.$this->dbString($strID);
+		return '"'.\pg_escape_string($strKey).'"'.$strOperator.$this->dbString($strID);
 	}
 
 	public function whereLike($strKey, $strID) {

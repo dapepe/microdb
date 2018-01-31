@@ -76,6 +76,20 @@ class View {
 		return $this->getOneBy($this->strKey, $strID);
 	}
 
+	/**
+	 * Returns a complete node, identified by its primary key
+	 *
+	 * @param string $strID
+	 * @return array|bool
+	 */
+	public function select($mxtWhere) {
+		$arrItem = $this->sqlLink->select('*', $this->strID, $mxtWhere);
+		if ($arrItem)
+			return $arrItem[0];
+		else
+			return false;
+	}
+
 	// ============== Advanced data functions ==============
 
 	/**
