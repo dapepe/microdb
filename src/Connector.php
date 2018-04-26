@@ -221,7 +221,7 @@ abstract class Connector {
 
 		$value = trim($value);
 
-		if ( !is_numeric($value) or !preg_match('/^\d+$/', (string)$value) )
+		if ( !is_numeric($value) or !preg_match('/^-?\d+$/', (string)$value) )
 			throw new Exception('$value is not an integer (value: '.print_r($value, true).').');
 
 		return $value;
