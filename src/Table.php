@@ -14,12 +14,13 @@ class Table extends View {
 	/**
 	 * Inserts a new item
 	 *
+	 * @param string $strKey The key/field to return after insert (default is PK)
 	 * @param array $arrValues Assoc. Array containing the values to be inserted
 	 */
-	public function insert($arrValues) {
-		$this->sqlLink->insert($arrValues, $this->strID);
+	public function insert($arrValues, $strKey = null) {
+		return $this->sqlLink->insert($arrValues, $this->strID, $strKey ? $strKey : $this->strKey);
 	}
-
+	
 	/**
 	 * Updates a specified item
 	 *

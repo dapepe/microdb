@@ -206,13 +206,19 @@ class PostgreSQL extends Connector {
 	 * @param string $strTable
 	 * @return bool
 	 */
-	public function insert(array $arrValues, $strTable) {
+	public function insert(array $arrValues, $strTable, $strKey) {
 		$strColumns = implode(',', array_map(function($value) { return '"'.$value.'"'; }, array_keys($arrValues)));
 		$strValues = implode(',', array_map(array($this, 'dbParameter'), array_values($arrValues)));
 
-		$strQuery = 'INSERT INTO "'.$strTable.'" ('.$strColumns.') VALUES ('.$strValues.')';
+		$strQuery = 'INSERT INTO "'.$strTable.'" ('.$strColumns.') VALUES ('.$strValues.')' . ($strKey ? ' RETURNING "' . $strKey . '"' : '');
 
-		return $this->query($strQuery);
+		$res = $this->query($strQuery);
+
+		if (!$strKey)
+			return $res;
+
+		$id = \pg_fetch_array($res);
+		return array_shift($id);
 	}
 
 	/**
